@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <title>คำนวณราคามุ้งครอบกรง</title>
+  <style>
+    body { font-family: sans-serif; padding: 30px; background: #f0f0f0; }
+    .container { max-width: 420px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 0 10px #ccc; }
+    input, button { width: 100%; padding: 10px; margin: 10px 0; font-size: 16px; }
+    h2 { color: #444; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🧵 คำนวณราคามุ้งสั่งตัด</h2>
+    <label>กว้าง (ซม.)</label>
+    <input type="number" id="width" placeholder="เช่น 60">
+    <label>ยาว (ซม.)</label>
+    <input type="number" id="length" placeholder="เช่น 90">
+    <label>สูง (ซม.)</label>
+    <input type="number" id="height" placeholder="เช่น 60">
+    <button onclick="calculatePrice()">คำนวณราคาขาย</button>
+    <h3 id="result">ราคาขาย: - บาท</h3>
+    <p id="profit"></p>
+  </div>
+
+  <script>
+    function calculatePrice() {
+      const width = parseFloat(document.getElementById('width').value);
+      const length = parseFloat(document.getElementById('length').value);
+      const height = parseFloat(document.getElementById('height').value);
+
+      if (!width || !length || !height) {
+        document.getElementById('result').innerText = '❗️กรุณากรอกขนาดให้ครบ';
+        document.getElementById('profit').innerText = '';
+        return;
+      }
+
+      // แปลงหน่วยจากซม. เป็นเมตร
+      const width_m = width / 100;
+      const length_m = length / 100;
+      const height_m = height / 100;
+
+      // พื้นที่รวมของผ้า (ตารางเมตร)
+      const area_m2 = (width * height * 2 + length * height * 2 + width * length) / 10000;
+
+      // ต้นทุนผ้า
+      const fabricCost = area_m2 * 16.5;
+
+      // ต้นทุนศิลปะ: 10 บาทต่อเมตรความยาว
+      const materialCost = length_m * 10;
+
+      // ค่าแรง (ทุกตัวเท่ากัน)
+      const laborCost = 80;
+
+      // ต้นทุนรวม
+      const totalCost = fabricCost + materialCost + laborCost;
+
+      // ราคาขาย = (ต้นทุน ÷ 0.88) × 1.4
+      const sellingPrice = Math.ceil((totalCost / 0.88) * 1.4);
+
+      // ค่าธรรมเนียม Shopee (12%)
+      const shopeeFee = sellingPrice * 0.12;
+
+      // กำไรสุทธิ
+      const netProfit = Math.round(sellingPrice - totalCost - shopeeFee);
+
+      document.getElementById('result').innerText = '💰 ราคาขายที่ควรตั้ง: ' + sellingPrice + ' บาท';
+      document.getElementById('profit').innerText = '📈 กำไรสุทธิ (หลัง Shopee): ' + netProfit + ' บาท';
+    }
+  </script>
+</body>
+</html>
